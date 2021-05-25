@@ -2,13 +2,24 @@
   hosts: localhost
   connection: local 
   become: True
+  vars:
+    project_path: /Volumes/data/dev/www/
+    build_folder: build
   tasks:
     - name: Install packages
       npm:
-        name: "nodemon"
+        name: "pm2"
+        global: yes
         state: "present"
-        path: /Volumes/data/dev/www/
+        
     - name: Deploy static website
       copy:
-        src: dist
+        src: build
         dest: /Volumes/data/dev/www/
+    
+    - name: Delete old pm2 process
+      command: pm2 delete container-app
+      ignore_errors: yes        
+
+    - name: Start pm2
+      command: pm2 serve --port 4139 /Volumes/data/dev/www/{{build_folder}} --name container-app --spa     
