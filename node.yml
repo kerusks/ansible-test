@@ -1,0 +1,16 @@
+- hosts: webservers 
+  become: True
+  tasks:
+    - name: Install packages
+      npm:
+        name: "nodemon"
+        state: "present"
+    - name: Start Node server
+      service:
+        name: nodemon
+        state: started
+        enabled: True
+    - name: Deploy static website
+      copy:
+        src: dist/*
+        dest: /Volumes/data/dev/www/
